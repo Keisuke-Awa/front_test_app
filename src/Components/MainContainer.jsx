@@ -28,11 +28,23 @@ class MainContainer extends Component {
   }
 
   createProduct = (product) => {
-    console.log(product);
     axios.post('http://localhost:3001/products', { product })
       .then((response) => {
         const newData = update(this.state.products, { $push: [response.data] });
         this.setState({ products: newData });
+      })
+      .catch((data) => {
+        console.log(data);
+      });
+  }
+
+  deleteProduct = (id) => {
+    axios.delete(`http://localhost:3001/products/${id}`)
+      .then(() => {
+        const productIndex = this.state.products.findIndex(x => x.id === id);
+        const deletedProducts = update(this.state.products, { $splice: [[productIndex, 1]] });
+        this.setState({ products: deletedProducts });
+        console.log('set');
       })
       .catch((data) => {
         console.log(data);
